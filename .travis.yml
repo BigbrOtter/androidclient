@@ -21,8 +21,8 @@ android:
     
     # Specify at least one system image,
     # if you need to run emulator(s) during your tests
-    - sys-img-armeabi-v7a-android-27
-    - sys-img-armeabi-v7a-android-17
+    - sys-img-armeabi-v7a-google_apis-27
+    - sys-img-armeabi-v7a-google_apis-17
 licenses:
     - 'android-sdk-license-.+'
 jdk:
@@ -31,7 +31,7 @@ before_install:
   - yes | sdkmanager "platforms;android-27"
 # Emulator Management: Create, Start and Wait
 before_script:
-  - echo no | android create avd --force -n test -t android-27 --abi armeabi-v7a
+  - echo no | android create avd --force -n test -t android-27 --abi google_apis/armeabi-v7a
   - emulator -avd test -no-audio -no-window &
   - android-wait-for-emulator
   - adb shell input keyevent 82 &  
