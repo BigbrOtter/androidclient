@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Android Client</string>
+    <string name="title_activity_login">LoginActivity</string>
 </resources>
