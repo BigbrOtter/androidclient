@@ -12,10 +12,11 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
-        <TextView
-            android:layout_width="wrap_content"
+        <Button
+            android:id="@+id/activity_main_btn_alert_test"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Turn off/on stream! -- // -- " />
+            android:text="Start stream"/>
 
         <TextView
             android:layout_width="wrap_content"
