@@ -1,7 +1,7 @@
 package nl.bigbrotter.androidclient.Controllers;
 
-import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
 import android.util.Log;
 
 import org.json.JSONException;
@@ -52,5 +52,4 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
     }
-
 }

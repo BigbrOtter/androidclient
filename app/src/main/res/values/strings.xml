@@ -1,8 +1,8 @@
 <resources>
     <string name="app_name">Android Client</string>
     <string name="title_activity_login">LoginActivity</string>
-	
-	<string name="start_stream">stream</string>
+
+    <string name="start_stream">stream</string>
     <string name="stop_stream">stop</string>
     <string name="disable_camera">disable camera</string>
     <string name="enable_camera">enable camera</string>
