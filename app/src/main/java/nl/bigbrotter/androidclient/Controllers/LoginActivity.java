@@ -1,9 +1,15 @@
 package nl.bigbrotter.androidclient.Controllers;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 
 import com.nbsp.materialfilepicker.MaterialFilePicker;
 import com.nbsp.materialfilepicker.ui.FilePickerActivity;
@@ -21,18 +27,39 @@ import nl.bigbrotter.androidclient.R;
 
 public class LoginActivity extends AppCompatActivity {
 
+    Button btn;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        new MaterialFilePicker()
-                .withActivity(this)
-                .withRequestCode(1)
-                .withFilter(Pattern.compile(".*\\.circle$")) // Filtering files and directories by file name using regexp
-                .withFilterDirectories(true) // Set directories filterable (false by default)
-                .withHiddenFiles(true) // Show hidden files and folders
-                .start();
+        btn = findViewById(R.id.login_button);
+
+        if (ContextCompat.checkSelfPermission(LoginActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[] { Manifest.permission.READ_EXTERNAL_STORAGE }, 50);
+        }
+
+        if (ContextCompat.checkSelfPermission(LoginActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[] { Manifest.permission.CAMERA }, 50);
+        }
+
+        if (ContextCompat.checkSelfPermission(LoginActivity.this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[] { Manifest.permission.RECORD_AUDIO }, 50);
+        }
+
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                new MaterialFilePicker()
+                        .withActivity(LoginActivity.this)
+                        .withRequestCode(1)
+                        .withFilter(Pattern.compile(".*\\.circle$")) // Filtering files and directories by file name using regexp
+                        .withFilterDirectories(true) // Set directories filterable (false by default)
+                        .withHiddenFiles(true) // Show hidden files and folders
+                        .start();
+            }
+        });
     }
 
     @Override
@@ -55,6 +82,8 @@ public class LoginActivity extends AppCompatActivity {
                 DataHelper.saveKeys(json, LoginActivity.this);
                 Log.e("TESTTING", "Public: " + DataHelper.getPublicKey(LoginActivity.this));
                 Log.e("TESTTING", "Private: " + DataHelper.getPrivateKey(LoginActivity.this));
+
+                startActivity(new Intent(LoginActivity.this, MainActivity.class));
             } catch (IOException ex) {
                 ex.printStackTrace();
             } catch (JSONException e) {
