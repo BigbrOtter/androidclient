@@ -21,16 +21,17 @@
         android:theme="@style/AppTheme"
         tools:replace="android:icon">
         <activity android:name=".Controllers.MainActivity">
+        </activity>
+        <activity
+            android:name=".Controllers.LoginActivity"
+            android:label="@string/title_activity_login"
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".Controllers.LoginActivity"
-            android:label="@string/title_activity_login"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>
