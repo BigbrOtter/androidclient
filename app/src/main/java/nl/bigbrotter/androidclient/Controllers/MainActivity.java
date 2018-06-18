@@ -25,7 +25,6 @@ import net.ossrs.yasea.SrsRecordHandler;
 import java.io.IOException;
 import java.net.SocketException;
 
-import nl.bigbrotter.androidclient.Helpers.AlertHelper;
 import nl.bigbrotter.androidclient.R;
 
 public class MainActivity extends AppCompatActivity implements RtmpHandler.RtmpListener,
@@ -68,8 +67,8 @@ public class MainActivity extends AppCompatActivity implements RtmpHandler.RtmpL
         publisher.setEncodeHandler(new SrsEncodeHandler(this));
         publisher.setRtmpHandler(new RtmpHandler(this));
         publisher.setRecordHandler(new SrsRecordHandler(this));
-        publisher.setPreviewResolution(720, 480);
-        publisher.setOutputResolution(480, 720);
+        publisher.setPreviewResolution(720, 1280);
+        publisher.setOutputResolution(720, 1280);
         publisher.setVideoHDMode();
         publisher.startCamera();
         publisher.switchCameraFace(0);
