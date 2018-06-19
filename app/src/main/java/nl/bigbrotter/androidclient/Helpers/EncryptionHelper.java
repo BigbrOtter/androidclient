@@ -3,6 +3,7 @@ package nl.bigbrotter.androidclient.Helpers;
 import java.security.InvalidKeyException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
+import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
@@ -49,15 +50,9 @@ public class EncryptionHelper {
         return decryptedBytes;
     }
 
-    public byte[] hashSHA256(byte byteData[]) throws Exception{
-
-        //convert the byte to hex format method 1
-        StringBuffer sb = new StringBuffer();
-        for (int i = 0; i < byteData.length; i++) {
-            sb.append(Integer.toString((byteData[i] & 0xff) + 0x100, 16).substring(1));
-        }
-
-        return byteData;
-
+    public byte[] hashSHA256(byte[] data) throws NoSuchAlgorithmException {
+        MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
+        byte[] digest = messageDigest.digest(data);
+        return digest;
     }
 }

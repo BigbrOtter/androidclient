@@ -42,14 +42,6 @@ public class MainActivity extends AppCompatActivity implements RtmpHandler.RtmpL
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LOCKED);
         setContentView(R.layout.activity_main);
 
-        if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[] { Manifest.permission.CAMERA }, 50);
-        }
-
-        if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[] { Manifest.permission.RECORD_AUDIO }, 50);
-        }
-
         //SharedPreferences to save url for next use
         sharedPreferences = getSharedPreferences("Otter", MODE_PRIVATE);
         url = sharedPreferences.getString("url", url);

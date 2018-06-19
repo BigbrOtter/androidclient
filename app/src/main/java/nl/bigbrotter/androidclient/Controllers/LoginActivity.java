@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.regex.Pattern;
 
+import nl.bigbrotter.androidclient.Helpers.AlertHelper;
 import nl.bigbrotter.androidclient.Helpers.DataHelper;
 import nl.bigbrotter.androidclient.R;
 
@@ -34,32 +35,34 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        //Connect layout
         btn = findViewById(R.id.login_button);
 
-        if (ContextCompat.checkSelfPermission(LoginActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[] { Manifest.permission.READ_EXTERNAL_STORAGE }, 50);
-        }
+        if(DataHelper.getPrivateKey(LoginActivity.this).equals("errorPrivate")) {
 
-        if (ContextCompat.checkSelfPermission(LoginActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[] { Manifest.permission.CAMERA }, 50);
-        }
+            //Permission for Storage, Camera en Audio
+            requestPermissions(new String[]{
+                            Manifest.permission.READ_EXTERNAL_STORAGE,
+                            Manifest.permission.CAMERA,
+                            Manifest.permission.RECORD_AUDIO},
+                    105);
 
-        if (ContextCompat.checkSelfPermission(LoginActivity.this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[] { Manifest.permission.RECORD_AUDIO }, 50);
+            //Onclick open file picker
+            btn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    new MaterialFilePicker()
+                            .withActivity(LoginActivity.this)
+                            .withRequestCode(1)
+                            .withFilter(Pattern.compile(".*\\.circle$")) // Filtering files and directories by file name using regexp
+                            .withHiddenFiles(true) // Show hidden files and folders
+                            .start();
+                }
+            });
+        }else{
+            // If user is authenticated go to MainActivity
+            startActivity(new Intent(LoginActivity.this, MainActivity.class));
         }
-
-        btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                new MaterialFilePicker()
-                        .withActivity(LoginActivity.this)
-                        .withRequestCode(1)
-                        .withFilter(Pattern.compile(".*\\.circle$")) // Filtering files and directories by file name using regexp
-                        .withFilterDirectories(true) // Set directories filterable (false by default)
-                        .withHiddenFiles(true) // Show hidden files and folders
-                        .start();
-            }
-        });
     }
 
     @Override
@@ -67,9 +70,11 @@ public class LoginActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == 1 && resultCode == RESULT_OK) {
+            // Get selected file from device
             String filePath = data.getStringExtra(FilePickerActivity.RESULT_FILE_PATH);
             File file = new File(filePath);
 
+            //Get json from file
             String json = null;
             try {
                 InputStream is = new FileInputStream(file);
@@ -78,12 +83,16 @@ public class LoginActivity extends AppCompatActivity {
                 is.read(buffer);
                 is.close();
                 json = new String(buffer, "UTF-8");
-                Log.e("TESTTING", "Json: " + json);
-                DataHelper.saveKeys(json, LoginActivity.this);
-                Log.e("TESTTING", "Public: " + DataHelper.getPublicKey(LoginActivity.this));
-                Log.e("TESTTING", "Private: " + DataHelper.getPrivateKey(LoginActivity.this));
 
-                startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                //Save keys to device
+                DataHelper.saveKeys(json, LoginActivity.this);
+
+                //Check if keys are correct
+                if(DataHelper.getPrivateKey(LoginActivity.this).equals("errorPrivate")){
+                    AlertHelper.error(LoginActivity.this, "Er is iets mis gegaan!");
+                }else {
+                    startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                }
             } catch (IOException ex) {
                 ex.printStackTrace();
             } catch (JSONException e) {
