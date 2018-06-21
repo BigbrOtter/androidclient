@@ -8,4 +8,6 @@
     <string name="enable_camera">enable camera</string>
     <string name="disable_mic">disable mic</string>
     <string name="enable_mic">enable mic</string>
+    <string name="send_message">send</string>
+    <string name="message_hint">Enter message...</string>
 </resources>
