@@ -1,23 +1,23 @@
 {
   "buildFiles": [
-    "C:\\Users\\lol\\Documents\\GitHub\\androidclient\\library\\src\\main\\cpp\\Android.mk",
-    "C:\\Users\\lol\\Documents\\GitHub\\androidclient\\library\\src\\main\\cpp\\Application.mk"
+    "C:\\Users\\Kevin\\Documents\\GitHub\\androidclient\\library\\src\\main\\cpp\\Android.mk",
+    "C:\\Users\\Kevin\\Documents\\GitHub\\androidclient\\library\\src\\main\\cpp\\Application.mk"
   ],
   "cleanCommands": [
-    "C:\\Users\\lol\\AppData\\Local\\Android\\sdk\\ndk-bundle\\ndk-build.cmd NDK_PROJECT_PATH\u003dnull APP_BUILD_SCRIPT\u003dC:\\Users\\lol\\Documents\\GitHub\\androidclient\\library\\src\\main\\cpp\\Android.mk NDK_APPLICATION_MK\u003dC:\\Users\\lol\\Documents\\GitHub\\androidclient\\library\\src\\main\\cpp\\Application.mk APP_ABI\u003dx86 NDK_ALL_ABIS\u003dx86 NDK_DEBUG\u003d0 APP_PLATFORM\u003dandroid-21 NDK_OUT\u003dC:/Users/lol/Documents/GitHub/androidclient/library/build/intermediates/ndkBuild/release/obj NDK_LIBS_OUT\u003dC:\\Users\\lol\\Documents\\GitHub\\androidclient\\library\\build\\intermediates\\ndkBuild\\release\\lib clean"
+    "D:\\Programming\\AndroidStudio\\Sdk\\ndk-bundle\\ndk-build.cmd NDK_PROJECT_PATH\u003dnull APP_BUILD_SCRIPT\u003dC:\\Users\\Kevin\\Documents\\GitHub\\androidclient\\library\\src\\main\\cpp\\Android.mk NDK_APPLICATION_MK\u003dC:\\Users\\Kevin\\Documents\\GitHub\\androidclient\\library\\src\\main\\cpp\\Application.mk APP_ABI\u003dx86 NDK_ALL_ABIS\u003dx86 NDK_DEBUG\u003d0 APP_PLATFORM\u003dandroid-21 NDK_OUT\u003dC:/Users/Kevin/Documents/GitHub/androidclient/library/build/intermediates/ndkBuild/release/obj NDK_LIBS_OUT\u003dC:\\Users\\Kevin\\Documents\\GitHub\\androidclient\\library\\build\\intermediates\\ndkBuild\\release\\lib clean"
   ],
   "libraries": {
     "enc-release-x86": {
       "artifactName": "enc",
-      "buildCommand": "C:\\Users\\lol\\AppData\\Local\\Android\\sdk\\ndk-bundle\\ndk-build.cmd NDK_PROJECT_PATH\u003dnull APP_BUILD_SCRIPT\u003dC:\\Users\\lol\\Documents\\GitHub\\androidclient\\library\\src\\main\\cpp\\Android.mk NDK_APPLICATION_MK\u003dC:\\Users\\lol\\Documents\\GitHub\\androidclient\\library\\src\\main\\cpp\\Application.mk APP_ABI\u003dx86 NDK_ALL_ABIS\u003dx86 NDK_DEBUG\u003d0 APP_PLATFORM\u003dandroid-21 NDK_OUT\u003dC:/Users/lol/Documents/GitHub/androidclient/library/build/intermediates/ndkBuild/release/obj NDK_LIBS_OUT\u003dC:\\Users\\lol\\Documents\\GitHub\\androidclient\\library\\build\\intermediates\\ndkBuild\\release\\lib C:/Users/lol/Documents/GitHub/androidclient/library/build/intermediates/ndkBuild/release/obj/local/x86/libenc.so",
+      "buildCommand": "D:\\Programming\\AndroidStudio\\Sdk\\ndk-bundle\\ndk-build.cmd NDK_PROJECT_PATH\u003dnull APP_BUILD_SCRIPT\u003dC:\\Users\\Kevin\\Documents\\GitHub\\androidclient\\library\\src\\main\\cpp\\Android.mk NDK_APPLICATION_MK\u003dC:\\Users\\Kevin\\Documents\\GitHub\\androidclient\\library\\src\\main\\cpp\\Application.mk APP_ABI\u003dx86 NDK_ALL_ABIS\u003dx86 NDK_DEBUG\u003d0 APP_PLATFORM\u003dandroid-21 NDK_OUT\u003dC:/Users/Kevin/Documents/GitHub/androidclient/library/build/intermediates/ndkBuild/release/obj NDK_LIBS_OUT\u003dC:\\Users\\Kevin\\Documents\\GitHub\\androidclient\\library\\build\\intermediates\\ndkBuild\\release\\lib C:/Users/Kevin/Documents/GitHub/androidclient/library/build/intermediates/ndkBuild/release/obj/local/x86/libenc.so",
       "abi": "x86",
-      "output": "C:\\Users\\lol\\Documents\\GitHub\\androidclient\\library\\build\\intermediates\\ndkBuild\\release\\obj\\local\\x86\\libenc.so"
+      "output": "C:\\Users\\Kevin\\Documents\\GitHub\\androidclient\\library\\build\\intermediates\\ndkBuild\\release\\obj\\local\\x86\\libenc.so"
     },
     "yuv-release-x86": {
       "artifactName": "yuv",
-      "buildCommand": "C:\\Users\\lol\\AppData\\Local\\Android\\sdk\\ndk-bundle\\ndk-build.cmd NDK_PROJECT_PATH\u003dnull APP_BUILD_SCRIPT\u003dC:\\Users\\lol\\Documents\\GitHub\\androidclient\\library\\src\\main\\cpp\\Android.mk NDK_APPLICATION_MK\u003dC:\\Users\\lol\\Documents\\GitHub\\androidclient\\library\\src\\main\\cpp\\Application.mk APP_ABI\u003dx86 NDK_ALL_ABIS\u003dx86 NDK_DEBUG\u003d0 APP_PLATFORM\u003dandroid-21 NDK_OUT\u003dC:/Users/lol/Documents/GitHub/androidclient/library/build/intermediates/ndkBuild/release/obj NDK_LIBS_OUT\u003dC:\\Users\\lol\\Documents\\GitHub\\androidclient\\library\\build\\intermediates\\ndkBuild\\release\\lib C:/Users/lol/Documents/GitHub/androidclient/library/build/intermediates/ndkBuild/release/obj/local/x86/libyuv.so",
+      "buildCommand": "D:\\Programming\\AndroidStudio\\Sdk\\ndk-bundle\\ndk-build.cmd NDK_PROJECT_PATH\u003dnull APP_BUILD_SCRIPT\u003dC:\\Users\\Kevin\\Documents\\GitHub\\androidclient\\library\\src\\main\\cpp\\Android.mk NDK_APPLICATION_MK\u003dC:\\Users\\Kevin\\Documents\\GitHub\\androidclient\\library\\src\\main\\cpp\\Application.mk APP_ABI\u003dx86 NDK_ALL_ABIS\u003dx86 NDK_DEBUG\u003d0 APP_PLATFORM\u003dandroid-21 NDK_OUT\u003dC:/Users/Kevin/Documents/GitHub/androidclient/library/build/intermediates/ndkBuild/release/obj NDK_LIBS_OUT\u003dC:\\Users\\Kevin\\Documents\\GitHub\\androidclient\\library\\build\\intermediates\\ndkBuild\\release\\lib C:/Users/Kevin/Documents/GitHub/androidclient/library/build/intermediates/ndkBuild/release/obj/local/x86/libyuv.so",
       "abi": "x86",
-      "output": "C:\\Users\\lol\\Documents\\GitHub\\androidclient\\library\\build\\intermediates\\ndkBuild\\release\\obj\\local\\x86\\libyuv.so"
+      "output": "C:\\Users\\Kevin\\Documents\\GitHub\\androidclient\\library\\build\\intermediates\\ndkBuild\\release\\obj\\local\\x86\\libyuv.so"
     }
   }
 }

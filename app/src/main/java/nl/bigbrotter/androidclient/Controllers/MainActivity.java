@@ -1,5 +1,6 @@
 package nl.bigbrotter.androidclient.Controllers;
 
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.os.AsyncTask;
 import android.support.v7.app.AlertDialog;
@@ -16,6 +17,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -91,6 +93,7 @@ public class MainActivity extends AppCompatActivity implements RtmpHandler.RtmpL
     private Timer timer;
     private List<Chat> chatMessages;
     private long longTime;
+    private int responseCode;
 
     //Image toggle
     private boolean bMicState, bCameraState = true;
@@ -365,11 +368,18 @@ public class MainActivity extends AppCompatActivity implements RtmpHandler.RtmpL
             @Override
             public void onResponse(JSONObject response) {
                 try {
+                    SharedPreferences.Editor preferencesEditor = getApplicationContext().getSharedPreferences("StreamSession", MODE_PRIVATE).edit();
                     JSONObject stream = response.getJSONObject("stream");
                     streamId = stream.getString("_id");
                     streamKey = stream.getString("key");
                     streamerId = stream.getString("user");
                     url = response.getString("stream_url");
+                    preferencesEditor.putString("streamId", streamId);
+                    preferencesEditor.putString("streamKey", streamKey);
+                    preferencesEditor.putString("streamerId", streamerId);
+                    preferencesEditor.putString("url", url);
+                    preferencesEditor.apply();
+                    preferencesEditor.commit();
                     getChat();
                 } catch (JSONException jE) {
                     Log.e("getStreamInfo JSONex", jE.getMessage());
@@ -378,9 +388,20 @@ public class MainActivity extends AppCompatActivity implements RtmpHandler.RtmpL
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.e("getStreamInfo VolleyEx", error.getMessage());
+                SharedPreferences preferences = getSharedPreferences("StreamSession", MODE_PRIVATE);
+                streamId = preferences.getString("streamId", null);
+                streamKey = preferences.getString("streamKey", null);
+                streamerId = preferences.getString("streamerId", null);
+                url = preferences.getString("url", null);
+                getChat();
             }
         }) {
+            @Override
+            protected Response<JSONObject> parseNetworkResponse(NetworkResponse response) {
+                responseCode = response.statusCode;
+                return super.parseNetworkResponse(response);
+            }
+
             @Override
             public Map<String, String> getHeaders() {
                 HashMap<String, String> headers = new HashMap<>();
