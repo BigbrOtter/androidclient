@@ -93,10 +93,9 @@ public class MainActivity extends AppCompatActivity implements RtmpHandler.RtmpL
     private Timer timer;
     private List<Chat> chatMessages;
     private long longTime;
-    private int responseCode;
 
     //Image toggle
-    private boolean bMicState, bCameraState = true;
+    private boolean bMicState = true, bCameraState = true;
 
 
 
@@ -167,11 +166,11 @@ public class MainActivity extends AppCompatActivity implements RtmpHandler.RtmpL
 
                 if (bMicState) {
                     publisher.setSendVideoOnly(true);
-                    imgToggleAudio.setBackgroundResource(R.drawable.mic_off);
+                    imgToggleAudio.setBackgroundResource(R.drawable.mic_on);
                     bMicState = false;
                 } else {
                     publisher.setSendVideoOnly(false);
-                    imgToggleAudio.setBackgroundResource(R.drawable.mic_on);
+                    imgToggleAudio.setBackgroundResource(R.drawable.mic_off);
                     bMicState = true;
                 }
             }
@@ -183,11 +182,11 @@ public class MainActivity extends AppCompatActivity implements RtmpHandler.RtmpL
             public void onClick(View view) {
                 if (bCameraState) {
                     publisher.setSendAudioOnly(true);
-                    imgToggleVideo.setBackgroundResource(R.drawable.video_off);
+                    imgToggleVideo.setBackgroundResource(R.drawable.video_on);
                     bCameraState = false;
                 } else {
                     publisher.setSendAudioOnly(false);
-                    imgToggleVideo.setBackgroundResource(R.drawable.video_on);
+                    imgToggleVideo.setBackgroundResource(R.drawable.video_off);
                     bCameraState = true;
                 }
             }
@@ -396,12 +395,6 @@ public class MainActivity extends AppCompatActivity implements RtmpHandler.RtmpL
                 getChat();
             }
         }) {
-            @Override
-            protected Response<JSONObject> parseNetworkResponse(NetworkResponse response) {
-                responseCode = response.statusCode;
-                return super.parseNetworkResponse(response);
-            }
-
             @Override
             public Map<String, String> getHeaders() {
                 HashMap<String, String> headers = new HashMap<>();
