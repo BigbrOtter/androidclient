@@ -22,6 +22,11 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
     private List<Chat> chatMessages;
     private LayoutInflater inflater;
 
+    /**
+     * Constructor
+     * @param context context for the LayoutInflater
+     * @param messages list of messages to fill the RecyclerView
+     */
     public ChatAdapter(Context context, List<Chat> messages) {
         inflater = LayoutInflater.from(context);
         chatMessages = messages;
@@ -40,11 +45,17 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
         holder.setMessage(message.getMessage());
     }
 
+    /**
+     * @return Returns the amount of messages in the array
+     */
     @Override
     public int getItemCount() {
         return chatMessages.size();
     }
 
+    /**
+     * ViewHolder used by the RecyclerView
+     */
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
         private TextView message;
