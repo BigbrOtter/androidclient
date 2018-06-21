@@ -1,11 +1,7 @@
 package nl.bigbrotter.androidclient.Controllers;
 
-import android.Manifest;
 import android.content.pm.ActivityInfo;
-import android.content.pm.PackageManager;
 import android.os.AsyncTask;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -19,13 +15,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.github.faucamp.simplertmp.RtmpHandler;
 
@@ -64,6 +58,7 @@ import java.util.TimerTask;
 import javax.crypto.Cipher;
 
 import nl.bigbrotter.androidclient.Model.Chat;
+import nl.bigbrotter.androidclient.Model.Key;
 import nl.bigbrotter.androidclient.R;
 import nl.bigbrotter.androidclient.View.ChatAdapter;
 
@@ -74,13 +69,15 @@ public class MainActivity extends AppCompatActivity implements RtmpHandler.RtmpL
     private AlertDialog dialog;
     private SrsPublisher publisher;
     private Button btnStream, btnToggleVideo, btnToggleAudio, btnSendMessage, btnGetUrl;
-    private EditText etMessage, etUrl;
+    private EditText etMessage;
     private RecyclerView chatView;
     private RecyclerView.Adapter chatAdapter;
     private String streamId;
     private String streamKey;
+    private String streamerId;
     private String certificate;
-    private String url = "rtmp://145.49.34.214:1935/live/";
+    private String url;
+    private Timer timer;
     private List<Chat> chatMessages;
     private long longTime;
 
@@ -94,30 +91,19 @@ public class MainActivity extends AppCompatActivity implements RtmpHandler.RtmpL
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LOCKED);
         setContentView(R.layout.activity_main);
 
-        if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[] { Manifest.permission.CAMERA }, 50);
-        }
-
-        if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[] { Manifest.permission.RECORD_AUDIO }, 50);
-        }
-
         queue = Volley.newRequestQueue(getApplicationContext());
-        //TODO: make certificate dynamic
-        certificate = "KKsOCYy0uQgcKIPU8OgI8PtAXQEecQzqVBL6QTcnY0RzHRSc+0BXdyEpCROeTpjY3F6hWcEcZoVY5P7mehH33+310457oFqZRy8j350eWDfp9lKuShVGR0Doq212q6mOtMxxkv8JM2+WjDmsKdxmvUJJnJJ8Z7AQmAd3z+2ch1ZijajM/ai1itOegvmuA8XE6iu9AAXdvUNkaGC9b06kU3OtxWHbnqHFQ4ei66zP8hwiyhjsyZVRGSeDSuTjfqFkdKmMgvDuBEiQsYrdhm3myqKpUVlarM/Cr33vpwwoP9XZY8xEFxx9jzIqBVHEb3b5ca1owIrl/4ZDZUw58cTk9oCRY09TMt3TUx0Ed7o64NlQ9j85/FwuzIRYZOsuwnyho2+AG14lWM7iPCvbOlVcvV+A98fqHxXxLc4UnUFi5O7CalbEp6e7InhVsugprO4ZlvNLhtiVSzlXhk29ysBFoQWMxNtNvRbp8Hw6sLxKAYpdqTZmUd33/KLPeEJFNvM4ENT5desuP7KVAm6LZozOwMPXf4IkL9jvsbXCCFvNYwgvqfDGrvGit3whgg3krJTmJVKCtrsQ0Y3aevUbhDsRcBViFr+5dHDzMLTzkJ2oMcDz0ncA74nL7G/wIa385Fi8QYoMEnITt/GGqtmOGkNYDtYtN0G1Pf4LaSOeXBHJ8pg=";
+        certificate = Key.getCertificate(getApplicationContext());
         longTime = System.currentTimeMillis() / 1000L;
 
-        etUrl = findViewById(R.id.etUrl);
-        etUrl.setHint("insert URL...");
-        etUrl.setText(url);
-
         etMessage = findViewById(R.id.etChat);
+        etMessage.setEnabled(false);
 
         btnStream = findViewById(R.id.btnStream);
         btnStream.setEnabled(false);
         btnToggleVideo = findViewById(R.id.btnToggleVideo);
         btnToggleAudio = findViewById(R.id.btnToggleAudio);
         btnSendMessage = findViewById(R.id.btnSendMessage);
+        btnSendMessage.setEnabled(false);
         btnGetUrl = findViewById(R.id.btnGetUrl);
 
         chatMessages = new ArrayList<>();
@@ -139,8 +125,9 @@ public class MainActivity extends AppCompatActivity implements RtmpHandler.RtmpL
         publisher.startCamera();
         publisher.switchCameraFace(0);
 
+        timer = new Timer();
+
         //Start and stop the stream
-        //TODO: reset url when person stops streaming
         btnStream.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -153,8 +140,11 @@ public class MainActivity extends AppCompatActivity implements RtmpHandler.RtmpL
                     publisher.stopPublish();
                     btnStream.setText(getResources().getString(R.string.start_stream));
                     deleteStreamKey();
+                    stopGetChat();
                     btnStream.setEnabled(false);
                     btnGetUrl.setEnabled(true);
+                    etMessage.setEnabled(false);
+                    btnSendMessage.setEnabled(false);
                 }
             }
         });
@@ -192,26 +182,27 @@ public class MainActivity extends AppCompatActivity implements RtmpHandler.RtmpL
             @Override
             public void onClick(View v) {
                 getStreamInfo();
+                getChat();
                 btnStream.setEnabled(true);
                 btnGetUrl.setEnabled(false);
+                etMessage.setEnabled(true);
+                btnSendMessage.setEnabled(true);
             }
         });
 
         //Send messages
-        //TODO: replace hardcoded with real values
         btnSendMessage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 try {
                     String message = etMessage.getText().toString();
-                    new SendChatDetails().execute("https://bigbrotter.herokuapp.com/api/chat", "1", message, encryptRSA(hashSHA256(message)), certificate);
+                    new SendChatDetails().execute("https://bigbrotter.herokuapp.com/api/chat", streamerId, message, encryptRSA(hashSHA256(message)), certificate);
                 } catch (NoSuchAlgorithmException e) {
                     e.printStackTrace();
                 }
                 etMessage.setText("");
             }
         });
-        getChat();
     }
 
     @Override
@@ -222,13 +213,32 @@ public class MainActivity extends AppCompatActivity implements RtmpHandler.RtmpL
             dialog = builder.create();
             dialog.show();
             deleteStreamKey();
+        }else {
+            super.onBackPressed();
         }
+    }
+
+    @Override
+    protected void onPause() {
+        publisher.stopPublish();
+        if (streamKey != null) {
+            deleteStreamKey();
+        }
+        super.onPause();
     }
 
     @Override
     protected void onDestroy() {
         publisher.stopPublish();
-        super.onDestroy();
+        if(streamKey != null) {
+            builder = new AlertDialog.Builder(this);
+            builder.setMessage("Deleting stream info...").setCancelable(false);
+            dialog = builder.create();
+            dialog.show();
+            deleteStreamKey();
+        }else {
+            super.onDestroy();
+        }
     }
 
     //region RtmpHandler overrides
@@ -356,7 +366,6 @@ public class MainActivity extends AppCompatActivity implements RtmpHandler.RtmpL
         this.longTime = longTime;
     }
 
-    //TODO: get the other stream info as well. Make url dynamic
     public void getStreamInfo() {
         JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.POST, "https://bigbrotter.herokuapp.com/api/streams", null, new Response.Listener<JSONObject>() {
             @Override
@@ -366,10 +375,8 @@ public class MainActivity extends AppCompatActivity implements RtmpHandler.RtmpL
                     JSONObject stream = response.getJSONObject("stream");
                     streamId = stream.getString("_id");
                     streamKey = stream.getString("key");
-
-                    url += streamKey;
-                    etUrl.setText(url);
-
+                    streamerId = stream.getString("user");
+                    url = response.getString("stream_url");
                 } catch (JSONException jE) {
                     Log.i("", jE.getMessage());
                 }
@@ -398,6 +405,7 @@ public class MainActivity extends AppCompatActivity implements RtmpHandler.RtmpL
 
                 //remove local stream info in not done so already.
                 streamKey = null;
+                url = "";
                 if (dialog != null) {
                     finish();
                 }
@@ -419,7 +427,6 @@ public class MainActivity extends AppCompatActivity implements RtmpHandler.RtmpL
     }
 
     public void getChat() {
-        Timer timer = new Timer();
         TimerTask task = new TimerTask() {
             @Override
             public void run() {
@@ -448,19 +455,19 @@ public class MainActivity extends AppCompatActivity implements RtmpHandler.RtmpL
                                 setLongTime(getTime.getLong("timestamp"));
                             }
                         } catch (Exception e) {
-                            e.printStackTrace();
+                            //e.printStackTrace();
                         }
                     }
                 }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.i("", error.getMessage());
+                        //Log.i("", error.getMessage());
                     }
                 }) {
                     @Override
                     public Map<String, String> getHeaders() {
                         HashMap<String, String> headers = new HashMap<>();
-                        headers.put("streamer", "1");
+                        headers.put("streamer", streamerId);
                         //headers.put("timestamp", "0");
                         headers.put("timestamp", String.valueOf(getLongTime()));
                         headers.put("cert", certificate);
@@ -471,6 +478,10 @@ public class MainActivity extends AppCompatActivity implements RtmpHandler.RtmpL
             }
         };
         timer.schedule(task, 0, 1000);
+    }
+
+    public void stopGetChat() {
+        timer.cancel();
     }
 
     public void handleException(Exception e) {
@@ -496,61 +507,24 @@ public class MainActivity extends AppCompatActivity implements RtmpHandler.RtmpL
 
     public String encryptRSA(String input) {
         try {
-            //TODO: replace hardcoded key with actual key
-            String privkey = "-----BEGIN RSA PRIVATE KEY-----\n" +
-                    "MIIEpQIBAAKCAQEAoXVmDDzqkBD9wMpxBPxLNFqTg5Ru4llWPT0ofOroaEAQMxEL\n" +
-                    "I/PUxz5ToCT7xqoraPClsy1Sfrtof+dyuHexFCiQxHPnFe4uSmRgCEWyOmgsj7JD\n" +
-                    "A268BEEmlJ8WDoht2r4JW2Qsnjll10xBDv11Lnhcc3ubWi6DvP3LoI/KJcZJBwJd\n" +
-                    "aoo5Lq4s5TGC81XYXTEDmIDDEO+O8WbBq2CuTUT6nsBoLoIjMjJgk6qrNkSMw9ya\n" +
-                    "ZJsUqfZsJ3zaGFJe0DkTuX7jUer4akbfuRC+Qb8HUf5aGyLb7is6ZhbFDPULwVPH\n" +
-                    "3xQz9FiNQbJBxiTgyMXLhrmyhSWJHBqFKNMa5QIDAQABAoIBACLvyU4anFLiKlZe\n" +
-                    "N8hxY0CH3OWa58d4t012/1zQY8uzGQ5DwNpdt4wJc4Tym7xoNA54DBLSWshrevg6\n" +
-                    "N7uswpdvE6w+vCElscSNJa6EjkVPJ11MoG2Mt4hgJJ4CMn6gjMzJVDL/YRw3pU7K\n" +
-                    "BEXfGE0e5Dpk47/G0uDBNh+fHYnAnyy1uQQ0xNRPk9Pdt2ctP+wAns812nZtoC64\n" +
-                    "h8ItPHQ2EEAIM0zr6nN3043H3JlSEK/5bYe/DeZ6atdPTCWChupF+7ftceuEbEx5\n" +
-                    "41I2zGtlmasVyozVmCyR9jJywJxPIi1exwGceRhpxWOOulQuSBl1GFUAYGQXFg79\n" +
-                    "/xOSWAECgYEAzfRCBRU79kzMuTFkoh4B9HHBSHzJIU5sCgP5rvcQiRt1ak7LIhci\n" +
-                    "Wr3nyeB4n2IWOPSXD2DpbnzQ6fMcHNHMcV2IdZLc4hQkEjlN6JqjmMyD8yyHHAO4\n" +
-                    "eNy71nM9UEMeSmTWKp6Dy1ElH3ubqSDgiIjCKvCV/GBcoj1tNj5iDgECgYEAyLE3\n" +
-                    "bFGEwrWb6XMb6A5hGlMnwnoHW1nFxz7URQDfgWXUCElOhLsM+GTxHvdMpgKr+K5J\n" +
-                    "uNicTLMNjCNn/Pexzhg/5jMIJcxGmsnfUQ2+bKu6+m1unsAYCDnQ0rE2TFmhWQcf\n" +
-                    "P3s+WSHy2/WQUzxtFXFwG4VkZ2i5oHt/HHMElOUCgYEAiEyaVJrU8A+rfPQ/UTri\n" +
-                    "uE+ARuSuhyhLP+WZnD1N6C8P6abzsD/3MG51s5imu3RCmLbmMftFASYBbJLDjB8c\n" +
-                    "Wfo4kPb8z3Hc3WKnOMT+d+UBfjF9yQB9WR9cAHSLo06IAVvykIoPVsMA+nDnd2qW\n" +
-                    "rkUzmw9Vc4yiQYy9diSa6AECgYEAuEdJXdOodOUvSXfhyv3RGcv7OS61rKLM4TwG\n" +
-                    "y2mW0QlAXW96gpQCv95oLQfkwJa5c/oNRYbYVfEfYmtsY7LI+DX6DpUTSSm+Nwlg\n" +
-                    "Xduh28UARkzPg0NdjcgQwDXqZsbySX4pqi+vO0bZ6jEcmeFlRIhJ6WtdmzplID/l\n" +
-                    "oqjWLyUCgYEAvc3rstwN4eQQ2hP6/SD5ZaClBSAkvv0nGVqyOyhFMQXLn8Oef7x8\n" +
-                    "xBkCEFy6lBZXXrqV+bvsJTYO1aQG8XqqMs+g+MHImTCkkVFR6dqpFixahnuw2vLu\n" +
-                    "ABVbpeZfHHd7rVljZFOoHlAHED3iZ5Hk3BCsa92VTVPaWJJ7P2Z74vM=\n" +
-                    "-----END RSA PRIVATE KEY-----";
+            String privateKeyey = Key.getPrivateKey(getApplicationContext());
 
             Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1PADDING");
-            cipher.init(Cipher.ENCRYPT_MODE, getPrivateKey(privkey));
+            cipher.init(Cipher.ENCRYPT_MODE, getPrivateKey(privateKeyey));
             byte[] encryptedBytes = cipher.doFinal(input.getBytes("UTF-8"));
             return Base64.encodeToString(encryptedBytes, Base64.DEFAULT);
         } catch (Exception e) {
             Log.e("", e.getMessage());
-            return "";
+            return null;
         }
     }
 
     public String decryptRSA(String input) {
         try {
-            //TODO: replace hardcoded key with actual key
-            String pubKey =
-                    "-----BEGIN PUBLIC KEY-----\n" +
-                    "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAugGy5Ao9fJJon1IPXs/+\n" +
-                    "jmgSelj7oz+ORcfc2IavZyoGMQbZpmkheoItOmVx62YFse3y1zie1nHd9Rx/jgu0\n" +
-                    "GTY7VZHLWQ8j2mDvfus7/XZwEBgPzgawF4xsoivPQNLSdJ6t5kzI1CynX3M1JsEi\n" +
-                    "/Xv+TacqgmaeAaX1KWOWIMrtL3YxFL+pLUTeQ5mNr+9ooHB8Cik34dXqJjYGk1J+\n" +
-                    "HY27wWRCxoXH7m143ZVW0VAHyQ6/3De3AbgQtsP6Kkg2qc5us2uC333r06YPwW1c\n" +
-                    "Q7yLMHHmu61CEH1B9xBA6dy78nI2zVQZeGXJR4OhUR0ZpIEnpo8NwvQ5qN+xIkV9\n" +
-                    "CwIDAQAB\n" +
-                    "-----END PUBLIC KEY-----";
+            String publicKey = Key.getPublicKey(getApplicationContext());
 
             Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1PADDING");
-            cipher.init(Cipher.DECRYPT_MODE, getPublicKey(pubKey));
+            cipher.init(Cipher.DECRYPT_MODE, getPublicKey(publicKey));
             byte[] decryptedBytes = cipher.doFinal(Base64.decode(input.getBytes("UTF-8"), Base64.DEFAULT));
             //byte[] decryptedBytes = Base64.decode(input.getBytes(), Base64.DEFAULT);
             return new String(decryptedBytes);
@@ -609,7 +583,7 @@ public class MainActivity extends AppCompatActivity implements RtmpHandler.RtmpL
 
             try {
                 Map<String, Object> params = new LinkedHashMap<>();
-                params.put("streamer", Integer.parseInt(strings[1]));
+                params.put("streamer", strings[1]);
                 params.put("message", strings[2]);
                 params.put("signature", strings[3]);
                 params.put("cert", strings[4]);

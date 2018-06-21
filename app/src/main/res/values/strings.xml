@@ -9,5 +9,6 @@
     <string name="disable_mic">disable mic</string>
     <string name="enable_mic">enable mic</string>
     <string name="send_message">send</string>
-    <string name="message_hint">Enter message...</string>
+    <string name="message_hint">Enter message&#8230;</string>
+    <string name="get_stream_info">get stream info</string>
 </resources>

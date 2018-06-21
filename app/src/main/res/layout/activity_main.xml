@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".Controllers.MainActivity"
-    android:descendantFocusability="beforeDescendants">
+    android:descendantFocusability="beforeDescendants"
+    android:focusableInTouchMode="true">
 
     <net.ossrs.yasea.SrsCameraView
         android:id="@+id/camera_view"
@@ -38,20 +39,13 @@
         android:layout_below="@+id/btnToggleVideo"
         android:text="@string/disable_mic" />
 
-    <EditText
-        android:id="@+id/etUrl"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="16sp"
-        android:textColor="@android:color/holo_blue_light"/>
-
     <Button
+        android:id="@+id/btnGetUrl"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
-        android:id="@+id/btnGetUrl"
-        android:layout_below="@+id/btnStream"
-        android:text="get url"/>
+        android:layout_alignParentTop="true"
+        android:text="@string/get_stream_info" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/chatView"

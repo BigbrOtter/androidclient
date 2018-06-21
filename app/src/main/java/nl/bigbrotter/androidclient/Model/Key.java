@@ -34,13 +34,13 @@ public class Key {
     // Get public key from local storage
     public static String getPublicKey(Context context){
         SharedPreferences prefs = context.getSharedPreferences("Keys", context.MODE_PRIVATE);
-        return prefs.getString("userPrivateKey", "errorPublic");
+        return prefs.getString("serverPublicKey", "errorPublic");
     }
 
     //Get private key from local storage
     public static String getPrivateKey(Context context){
         SharedPreferences prefs = context.getSharedPreferences("Keys", context.MODE_PRIVATE);
-        return prefs.getString("serverPublicKey", "errorPrivate");
+        return prefs.getString("userPrivateKey", "errorPrivate");
     }
 
     //Get certificate from local storage
