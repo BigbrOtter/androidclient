@@ -65,24 +65,32 @@ import nl.bigbrotter.androidclient.View.ChatAdapter;
 public class MainActivity extends AppCompatActivity implements RtmpHandler.RtmpListener,
         SrsRecordHandler.SrsRecordListener, SrsEncodeHandler.SrsEncodeListener {
 
+    //Pop-up
     private AlertDialog.Builder builder;
     private AlertDialog dialog;
+
+    //Views
     private SrsPublisher publisher;
     private Button btnStream, btnToggleVideo, btnToggleAudio, btnSendMessage, btnGetUrl;
     private EditText etMessage;
     private RecyclerView chatView;
     private RecyclerView.Adapter chatAdapter;
+
+    //Stream info
     private String streamId;
     private String streamKey;
     private String streamerId;
     private String certificate;
     private String url;
+
+    //Volley requests
+    private RequestQueue queue;
+
     private Timer timer;
     private List<Chat> chatMessages;
     private long longTime;
 
-    //Volley requests
-    private RequestQueue queue;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -223,6 +231,11 @@ public class MainActivity extends AppCompatActivity implements RtmpHandler.RtmpL
         publisher.stopPublish();
         if (streamKey != null) {
             deleteStreamKey();
+            stopGetChat();
+            btnStream.setEnabled(false);
+            btnGetUrl.setEnabled(true);
+            etMessage.setEnabled(false);
+            btnSendMessage.setEnabled(false);
         }
         super.onPause();
     }
@@ -403,9 +416,11 @@ public class MainActivity extends AppCompatActivity implements RtmpHandler.RtmpL
             public void onResponse(JSONObject response) {
                 Log.i("", response.toString());
 
-                //remove local stream info in not done so already.
+                //remove local stream info if not done so already.
                 streamKey = null;
                 url = "";
+
+                //End activity when back button is pressed after key is deleted.
                 if (dialog != null) {
                     finish();
                 }
@@ -427,6 +442,7 @@ public class MainActivity extends AppCompatActivity implements RtmpHandler.RtmpL
     }
 
     public void getChat() {
+        timer = new Timer();
         TimerTask task = new TimerTask() {
             @Override
             public void run() {
@@ -507,10 +523,10 @@ public class MainActivity extends AppCompatActivity implements RtmpHandler.RtmpL
 
     public String encryptRSA(String input) {
         try {
-            String privateKeyey = Key.getPrivateKey(getApplicationContext());
+            String privateKey = Key.getPrivateKey(getApplicationContext());
 
             Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1PADDING");
-            cipher.init(Cipher.ENCRYPT_MODE, getPrivateKey(privateKeyey));
+            cipher.init(Cipher.ENCRYPT_MODE, getPrivateKey(privateKey));
             byte[] encryptedBytes = cipher.doFinal(input.getBytes("UTF-8"));
             return Base64.encodeToString(encryptedBytes, Base64.DEFAULT);
         } catch (Exception e) {
@@ -526,9 +542,7 @@ public class MainActivity extends AppCompatActivity implements RtmpHandler.RtmpL
             Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1PADDING");
             cipher.init(Cipher.DECRYPT_MODE, getPublicKey(publicKey));
             byte[] decryptedBytes = cipher.doFinal(Base64.decode(input.getBytes("UTF-8"), Base64.DEFAULT));
-            //byte[] decryptedBytes = Base64.decode(input.getBytes(), Base64.DEFAULT);
             return new String(decryptedBytes);
-            //return Base64.encodeToString(decryptedBytes, Base64.DEFAULT);
         } catch (Exception e) {
             e.printStackTrace();
             return null;
