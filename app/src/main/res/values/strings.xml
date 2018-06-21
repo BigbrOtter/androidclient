@@ -4,10 +4,6 @@
 	
 	<string name="start_stream">stream</string>
     <string name="stop_stream">stop</string>
-    <string name="disable_camera">disable camera</string>
-    <string name="enable_camera">enable camera</string>
-    <string name="disable_mic">disable mic</string>
-    <string name="enable_mic">enable mic</string>
     <string name="send_message">send</string>
     <string name="message_hint">Enter message&#8230;</string>
     <string name="get_stream_info">get stream info</string>

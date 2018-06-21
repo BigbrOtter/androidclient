@@ -24,7 +24,7 @@
         android:text="@string/start_stream" />
 
     <ImageView
-        android:id="@+id/btnToggleVideo"
+        android:id="@+id/imgToggleVideo"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_alignParentEnd="true"
@@ -32,15 +32,15 @@
         android:background="@drawable/video_off"/>
 
     <ImageView
-        android:id="@+id/btnToggleAudio"
+        android:id="@+id/imgToggleAudio"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_alignParentEnd="true"
-        android:layout_below="@+id/btnToggleVideo"
+        android:layout_below="@+id/imgToggleVideo"
         android:background="@drawable/mic_off"/>
 
     <Button
-        android:id="@+id/btnGetUrl"
+        android:id="@+id/btnGetStreamInfo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
