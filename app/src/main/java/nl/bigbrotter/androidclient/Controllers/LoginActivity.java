@@ -54,7 +54,7 @@ public class LoginActivity extends AppCompatActivity {
                     new MaterialFilePicker()
                             .withActivity(LoginActivity.this)
                             .withRequestCode(1)
-                            .withFilter(Pattern.compile(".*\\.circle$")) // Filtering files and directories by file name using regexp
+                            .withFilter(Pattern.compile(".*\\.circle$")) // Filtering on Circle file
                             .withHiddenFiles(true) // Show hidden files and folders
                             .start();
                 }
@@ -62,6 +62,7 @@ public class LoginActivity extends AppCompatActivity {
         }else{
             // If user is authenticated go to MainActivity
             startActivity(new Intent(LoginActivity.this, MainActivity.class));
+            finish();
         }
     }
 
@@ -92,6 +93,7 @@ public class LoginActivity extends AppCompatActivity {
                     AlertHelper.error(LoginActivity.this, "Er is iets mis gegaan!");
                 }else {
                     startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                    finish();
                 }
             } catch (IOException | JSONException ex) {
                 ex.printStackTrace();
