@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -71,7 +72,8 @@ public class MainActivity extends AppCompatActivity implements RtmpHandler.RtmpL
 
     //Views
     private SrsPublisher publisher;
-    private Button btnStream, btnToggleVideo, btnToggleAudio, btnSendMessage, btnGetUrl;
+    private Button btnStream, btnSendMessage, btnGetUrl;
+    private ImageView btnToggleVideo, btnToggleAudio;
     private EditText etMessage;
     private RecyclerView chatView;
     private RecyclerView.Adapter chatAdapter;
@@ -89,6 +91,9 @@ public class MainActivity extends AppCompatActivity implements RtmpHandler.RtmpL
     private Timer timer;
     private List<Chat> chatMessages;
     private long longTime;
+
+    //
+    private boolean bMicState = true, bCameraState = true;
 
 
 
@@ -162,12 +167,14 @@ public class MainActivity extends AppCompatActivity implements RtmpHandler.RtmpL
             @Override
             public void onClick(View view) {
 
-                if (btnToggleAudio.getText().toString().contentEquals(getResources().getString(R.string.disable_mic))) {
+                if (bMicState) {
                     publisher.setSendVideoOnly(true);
-                    btnToggleAudio.setText(getResources().getString(R.string.enable_mic));
+                    btnToggleAudio.setBackgroundResource(R.drawable.mic_off);
+                    bMicState = false;
                 } else {
                     publisher.setSendVideoOnly(false);
-                    btnToggleAudio.setText(getResources().getString(R.string.disable_mic));
+                    btnToggleAudio.setBackgroundResource(R.drawable.mic_on);
+                    bMicState = true;
                 }
             }
         });
@@ -176,12 +183,14 @@ public class MainActivity extends AppCompatActivity implements RtmpHandler.RtmpL
         btnToggleVideo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (btnToggleVideo.getText().toString().contentEquals(getResources().getString(R.string.disable_camera))) {
+                if (bCameraState) {
                     publisher.setSendAudioOnly(true);
-                    btnToggleVideo.setText(getResources().getString(R.string.enable_camera));
+                    btnToggleVideo.setBackgroundResource(R.drawable.video_off);
+                    bCameraState = false;
                 } else {
                     publisher.setSendAudioOnly(false);
-                    btnToggleVideo.setText(getResources().getString(R.string.disable_camera));
+                    btnToggleVideo.setBackgroundResource(R.drawable.video_on);
+                    bCameraState = true;
                 }
             }
         });

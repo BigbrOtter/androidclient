@@ -23,21 +23,21 @@
         android:layout_alignParentTop="true"
         android:text="@string/start_stream" />
 
-    <Button
+    <ImageView
         android:id="@+id/btnToggleVideo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:layout_alignParentEnd="true"
         android:layout_below="@+id/btnStream"
-        android:text="@string/disable_camera" />
+        android:background="@drawable/video_off"/>
 
-    <Button
+    <ImageView
         android:id="@+id/btnToggleAudio"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:layout_alignParentEnd="true"
         android:layout_below="@+id/btnToggleVideo"
-        android:text="@string/disable_mic" />
+        android:background="@drawable/mic_off"/>
 
     <Button
         android:id="@+id/btnGetUrl"
